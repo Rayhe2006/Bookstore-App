@@ -81,11 +81,87 @@ Adding a new status, such as Diamond, only needs a new class that implements `St
 
 Use case diagram:
 
-![Use case diagram](docs/use-case-diagram.png)
+```mermaid
+flowchart LR
+    owner([Owner])
+    customer([Customer])
+    owner --> login(Log in)
+    customer --> login
+    owner --> books(Add and delete books)
+    owner --> customers(Add and delete customers)
+    customer --> buy(Buy books)
+    customer --> redeem(Redeem points and buy books)
+    owner --> logout(Log out)
+    customer --> logout
+```
 
 Class diagram (the `Customer`, `State`, `SilverState`, and `GoldState` classes take part in the State pattern):
 
-![Class diagram](docs/class-diagram.png)
+```mermaid
+classDiagram
+    class User {
+        #String usr
+        #String pwd
+        +getUsername() String
+        +getPassword() String
+    }
+    class Customer {
+        -int points
+        -State customerState
+        +getStatus() String
+        +getState() State
+        +getPoints() int
+        +addPoints(int points) void
+        +removePoints(int points) void
+        +setState(State state) void
+    }
+    class Owner {
+        -ArrayList~Customer~ customers
+        -BookStore bookstore
+        +addCustomer(String usr, String pwd) void
+        +deleteCustomer(String usr) void
+        +addBook(Book book) void
+        +deleteBook(Book book) void
+        +saveData() void
+        +loadData() void
+    }
+    class BookStore {
+        -BookStore instance
+        -ArrayList~Book~ books
+        +getInstance() BookStore
+        +getBooks() ArrayList~Book~
+        +addBook(Book book) void
+        +deleteBook(Book book) void
+        +saveBooksToFile() void
+    }
+    class Book {
+        -String name
+        -double price
+        +getName() String
+        +getPrice() double
+    }
+    class State {
+        <<interface>>
+        +handlePurchase(Customer customer, double cost, boolean redeem) double
+        +updateState(Customer customer) void
+        +getStatusName() String
+    }
+    class SilverState
+    class GoldState
+    class FinalProject {
+        -Owner owner
+        +main(String[] args) void
+    }
+    User <|-- Customer
+    User <|-- Owner
+    Customer o-- State
+    State <|.. SilverState
+    State <|.. GoldState
+    Owner o-- "0..*" Customer
+    Owner o-- BookStore
+    BookStore o-- "0..*" Book
+    FinalProject *-- Owner
+```
 
 ## Data Files
 
@@ -100,7 +176,6 @@ The files in this repository are sample data.
 
 ```text
 src/finalproject/   Java source code
-docs/               UML diagrams (PNG)
 nbproject/          NetBeans (Ant) project configuration
 books.txt           Sample book data
 customers.txt       Sample customer data
